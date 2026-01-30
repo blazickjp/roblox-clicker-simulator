@@ -18,8 +18,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
--- Base coins per click
-local COINS_PER_CLICK = 1
+-- Base coins per click (was 1, now 3 for faster early game!)
+local COINS_PER_CLICK = 3
+
+-- STARTER BOOST: First 10 clicks give 10x coins!
+-- Kids need instant gratification - this gives 300 coins in first 10 clicks
+local STARTER_BOOST_CLICKS = 10
+local STARTER_BOOST_MULTIPLIER = 10
+
+-- Track starter boost per player
+local starterBoostRemaining = {}
 
 -- Cooldowns per player
 local cooldowns = {}
@@ -86,11 +94,28 @@ local function setupCoinPad(pad)
         end
         cooldowns[player.UserId] = tick()
         
+        -- Initialize starter boost for new clickers
+        if starterBoostRemaining[player.UserId] == nil then
+            starterBoostRemaining[player.UserId] = STARTER_BOOST_CLICKS
+        end
+        
         -- Check for lucky bonus
         local luckyChance = PlayerData.GetLuckyChance(player)
         local isLucky = math.random(1, 100) <= luckyChance
         
         local baseCoins = COINS_PER_CLICK
+        
+        -- Apply starter boost if available
+        local hasStarterBoost = false
+        if starterBoostRemaining[player.UserId] > 0 then
+            baseCoins = baseCoins * STARTER_BOOST_MULTIPLIER
+            starterBoostRemaining[player.UserId] = starterBoostRemaining[player.UserId] - 1
+            hasStarterBoost = true
+            if starterBoostRemaining[player.UserId] == 0 then
+                print("🎉 " .. player.Name .. " used all their starter boost!")
+            end
+        end
+        
         if isLucky then
             baseCoins = baseCoins * 2
         end
@@ -111,13 +136,25 @@ local function setupCoinPad(pad)
                 Size = originalSize
             }):Play()
             
-            -- Particles
-            particles:Emit(isLucky and 30 or 10)
+            -- Particles (more for special events!)
+            local particleCount = 10
+            if hasStarterBoost then particleCount = 25 end
+            if isLucky then particleCount = 30 end
+            if hasStarterBoost and isLucky then particleCount = 50 end
+            particles:Emit(particleCount)
             
-            -- Color flash for lucky
-            if isLucky then
-                pad.Color = Color3.fromRGB(255, 215, 0)  -- Gold!
-                print("🍀 LUCKY! " .. player.Name .. " got DOUBLE!")
+            -- Color flash for special events
+            if hasStarterBoost or isLucky then
+                if hasStarterBoost and isLucky then
+                    pad.Color = Color3.fromRGB(255, 100, 255)  -- Purple for combo!
+                    print("🎉🍀 STARTER BOOST + LUCKY! " .. player.Name .. " got MEGA COINS!")
+                elseif hasStarterBoost then
+                    pad.Color = Color3.fromRGB(100, 255, 255)  -- Cyan for starter boost
+                    print("🚀 STARTER BOOST! " .. player.Name .. " (" .. starterBoostRemaining[player.UserId] .. " left)")
+                else
+                    pad.Color = Color3.fromRGB(255, 215, 0)  -- Gold for lucky
+                    print("🍀 LUCKY! " .. player.Name .. " got DOUBLE!")
+                end
                 wait(0.2)
                 pad.Color = originalColor
             end

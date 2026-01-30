@@ -32,17 +32,19 @@ local function getZonesConfig()
 end
 
 -- ===== UPGRADE SETTINGS =====
-local CLICK_POWER_BASE_COST = 50
+-- Costs tuned for 9-year-old attention span!
+-- First upgrade should be affordable within 30 seconds
+local CLICK_POWER_BASE_COST = 50      -- With 50 welcome bonus, instant first upgrade!
 local CLICK_POWER_MULTIPLIER = 2
 
-local AUTO_CLICK_BASE_COST = 200
-local AUTO_CLICK_COINS_PER_LEVEL = 1
+local AUTO_CLICK_BASE_COST = 100      -- Was 200, reduced for faster gratification
+local AUTO_CLICK_COINS_PER_LEVEL = 2  -- Was 1, now gives 2 coins/sec per level (more visible!)
 
-local LUCKY_BASE_COST = 300
-local LUCKY_CHANCE_PER_LEVEL = 5
+local LUCKY_BASE_COST = 150           -- Was 300, more accessible
+local LUCKY_CHANCE_PER_LEVEL = 7      -- Was 5%, now 7% per level (more noticeable!)
 
-local SPEED_BASE_COST = 400
-local SPEED_REDUCTION_PER_LEVEL = 0.05
+local SPEED_BASE_COST = 200           -- Was 400, more accessible
+local SPEED_REDUCTION_PER_LEVEL = 0.06  -- Was 0.05, slightly faster improvement
 
 -- Calculate upgrade cost
 local function calculateCost(baseCost, level)
@@ -63,6 +65,18 @@ end
 function PlayerData.InitPlayer(player)
     local data = DataStoreManager.LoadData(player)
     
+    -- WELCOME BONUS FOR NEW PLAYERS!
+    -- Kids need instant gratification. If they're truly new, give them a head start.
+    local isNewPlayer = (data.TotalLogins == 0 and data.Coins == 0 and data.Clicks == 0)
+    if isNewPlayer then
+        -- Give welcome bonus: 50 coins to get them started
+        -- This plus starter boost (300 coins from first 10 clicks) = 350 coins fast!
+        -- That's enough to buy first upgrade (50) + first pet egg (100) with some left over
+        data.Coins = 50
+        data.TotalCoinsEarned = 50
+        print("🎉 NEW PLAYER BONUS! " .. player.Name .. " received 50 starting coins!")
+    end
+    
     -- Check daily login
     local today = math.floor(os.time() / 86400)
     if data.LastLoginDay ~= today then
@@ -71,8 +85,12 @@ function PlayerData.InitPlayer(player)
             -- Consecutive day!
             data.LoginStreak = data.LoginStreak + 1
         else
-            -- Streak broken
-            data.LoginStreak = 1
+            -- Streak broken (but not for brand new players)
+            if not isNewPlayer then
+                data.LoginStreak = 1
+            else
+                data.LoginStreak = 1  -- First day counts as 1
+            end
         end
         data.LastLoginDay = today
         data.TotalLogins = data.TotalLogins + 1

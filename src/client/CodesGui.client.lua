@@ -166,4 +166,23 @@ CodeResult.OnClientEvent:Connect(function(success, message)
     end
 end)
 
+-- AUTO-SHOW FOR NEW PLAYERS!
+-- Kids need to know codes exist. Show the panel on first join with a hint.
+spawn(function()
+    wait(5)  -- Wait for other systems to load
+    
+    -- Check if this might be a new player (no coins = probably new)
+    local GetStats = ReplicatedStorage:FindFirstChild("GetStats")
+    if GetStats then
+        local stats = GetStats:InvokeServer()
+        if stats and stats.Coins and stats.Coins < 200 and stats.Clicks and stats.Clicks < 50 then
+            -- Looks like a new player! Show codes panel with hint
+            panel.Visible = true
+            textBox.Text = ""
+            resultLabel.Text = "💡 TIP: Try typing WELCOME for free coins!"
+            resultLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        end
+    end
+end)
+
 print("🎫 CodesGui loaded!")

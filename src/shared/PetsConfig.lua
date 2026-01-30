@@ -49,11 +49,12 @@ PetsConfig.Pets = {
     },
 }
 
--- Egg types
+-- Egg types (costs reduced for better early game!)
+-- Basic was 500 - too long to wait! Now 100 = get a pet in first 2 minutes
 PetsConfig.Eggs = {
-    Basic = { cost = 500, name = "Basic Egg", emoji = "🥚", color = Color3.fromRGB(200, 200, 200) },
-    Golden = { cost = 5000, name = "Golden Egg", emoji = "🥚✨", color = Color3.fromRGB(255, 215, 0) },
-    Mythic = { cost = 50000, name = "Mythic Egg", emoji = "🥚🌟", color = Color3.fromRGB(200, 100, 255) },
+    Basic = { cost = 100, name = "Basic Egg", emoji = "🥚", color = Color3.fromRGB(200, 200, 200) },
+    Golden = { cost = 2000, name = "Golden Egg", emoji = "🥚✨", color = Color3.fromRGB(255, 215, 0) },
+    Mythic = { cost = 20000, name = "Mythic Egg", emoji = "🥚🌟", color = Color3.fromRGB(200, 100, 255) },
 }
 
 -- Egg rarity chances (better eggs = better chances)
