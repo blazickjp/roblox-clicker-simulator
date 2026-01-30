@@ -1,0 +1,46 @@
+{
+  "name": "ClickerSimulator",
+  "tree": {
+    "$className": "DataModel",
+    
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$path": "src/server"
+    },
+    
+    "StarterGui": {
+      "$className": "StarterGui",
+      "CoinGui": {
+        "$className": "ScreenGui",
+        "CoinDisplay": {
+          "$path": "src/client/CoinDisplay.client.lua"
+        }
+      },
+      "ShopGui": {
+        "$className": "ScreenGui",
+        "ShopScript": {
+          "$path": "src/client/ShopGui.client.lua"
+        }
+      }
+    },
+    
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$path": "src/shared"
+    },
+    
+    "Workspace": {
+      "$className": "Workspace",
+      "$properties": {
+        "FilteringEnabled": true
+      }
+    },
+    
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts"
+      }
+    }
+  }
+}
