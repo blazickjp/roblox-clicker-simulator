@@ -1,90 +1,77 @@
 --[[
-    RebirthSystem Script
-    ====================
-    REBIRTH = Start over but get a PERMANENT multiplier!
+    RebirthSystem - Start over with a PERMANENT multiplier!
     
-    When you rebirth:
-    - Your coins reset to 0
-    - Your upgrades reset to 0
-    - BUT you get a rebirth multiplier that makes EVERYTHING faster!
+    🌟 When you rebirth:
+    - Coins reset to 0
+    - Upgrades reset to 0
+    - BUT you get a multiplier that makes EVERYTHING faster!
     
-    Each rebirth makes the next one cost more, but you get stronger!
-    
-    ⭐ CHANGE THESE TO MAKE REBIRTH EASIER/HARDER! ⭐
+    Now integrated with DataStore for persistence!
 ]]
 
 local RebirthSystem = {}
 
--- How many coins needed for first rebirth
-local BASE_REBIRTH_COST = 10000  -- Change to 1000 for easier testing!
+-- Settings
+local BASE_REBIRTH_COST = 10000
+local REBIRTH_MULTIPLIER = 1.5
 
--- How much stronger each rebirth makes you
-local REBIRTH_MULTIPLIER = 1.5   -- 1.5x = 50% stronger each rebirth!
+-- Get DataStore manager
+local DataStoreManager = require(script.Parent.DataStoreManager)
 
--- Store rebirth data
-local rebirthData = {}
-
--- Initialize rebirth data for a player
+-- Initialize (data comes from DataStore now)
 function RebirthSystem.InitPlayer(player)
-    rebirthData[player.UserId] = {
-        Rebirths = 0,
-        RebirthMultiplier = 1,
-    }
     print("🔄 Rebirth system ready for " .. player.Name)
 end
 
--- Clean up when player leaves
+-- Clean up (DataStore handles saving)
 function RebirthSystem.RemovePlayer(player)
-    rebirthData[player.UserId] = nil
+    -- Data saved by DataStoreManager
 end
 
--- Get rebirth cost for a player
+-- Get rebirth cost
 function RebirthSystem.GetRebirthCost(player)
-    local data = rebirthData[player.UserId]
+    local data = DataStoreManager.GetData(player)
     if data then
-        -- Cost doubles each rebirth!
         return BASE_REBIRTH_COST * math.pow(2, data.Rebirths)
     end
     return BASE_REBIRTH_COST
 end
 
--- Get rebirth multiplier (makes everything stronger!)
+-- Get multiplier
 function RebirthSystem.GetMultiplier(player)
-    local data = rebirthData[player.UserId]
+    local data = DataStoreManager.GetData(player)
     if data then
-        return data.RebirthMultiplier
+        return math.pow(REBIRTH_MULTIPLIER, data.Rebirths)
     end
     return 1
 end
 
 -- Get number of rebirths
 function RebirthSystem.GetRebirths(player)
-    local data = rebirthData[player.UserId]
+    local data = DataStoreManager.GetData(player)
     if data then
         return data.Rebirths
     end
     return 0
 end
 
--- Try to rebirth (returns true if successful)
+-- Try to rebirth
 function RebirthSystem.TryRebirth(player, currentCoins, resetFunction)
-    local data = rebirthData[player.UserId]
+    local data = DataStoreManager.GetData(player)
     if not data then return false end
     
     local cost = RebirthSystem.GetRebirthCost(player)
     
     if currentCoins >= cost then
-        -- Do the rebirth!
-        data.Rebirths = data.Rebirths + 1
-        data.RebirthMultiplier = math.pow(REBIRTH_MULTIPLIER, data.Rebirths)
+        -- Rebirth happens in PlayerData.ResetForRebirth
+        -- which increments data.Rebirths
         
-        -- Call the reset function to reset player's coins and upgrades
         if resetFunction then
             resetFunction()
         end
         
         print("🌟 " .. player.Name .. " REBIRTHED! Now at " .. data.Rebirths .. " rebirths!")
-        print("   New multiplier: " .. data.RebirthMultiplier .. "x")
+        print("   New multiplier: " .. RebirthSystem.GetMultiplier(player) .. "x")
         
         return true
     end
@@ -92,13 +79,13 @@ function RebirthSystem.TryRebirth(player, currentCoins, resetFunction)
     return false
 end
 
--- Get all rebirth stats
+-- Get all stats
 function RebirthSystem.GetStats(player)
-    local data = rebirthData[player.UserId]
+    local data = DataStoreManager.GetData(player)
     if data then
         return {
             Rebirths = data.Rebirths,
-            RebirthMultiplier = data.RebirthMultiplier,
+            RebirthMultiplier = math.pow(REBIRTH_MULTIPLIER, data.Rebirths),
             NextRebirthCost = RebirthSystem.GetRebirthCost(player)
         }
     end

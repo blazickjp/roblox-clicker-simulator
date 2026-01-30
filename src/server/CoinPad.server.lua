@@ -1,90 +1,146 @@
 --[[
-    CoinPad Script
-    ==============
-    This makes the coin pads work!
+    CoinPad Script (v2.0)
+    =====================
+    Click the pads to get coins!
     
-    When you click a pad, you get coins!
+    Now with:
+    - Zone multipliers
+    - Pet bonuses
+    - Lucky doubles
+    - Cool animations!
     
     HOW TO USE:
     1. Create a Part in Workspace
-    2. Name it "CoinPad" (or it won't work!)
-    3. Add a ClickDetector inside the part
-    4. This script finds all CoinPads automatically!
-    
-    ⭐ CHANGE THIS NUMBER TO GIVE MORE COINS! ⭐
+    2. Name it "CoinPad"
+    3. This script finds all CoinPads automatically!
 ]]
 
--- How many coins you get per click (before upgrades!)
-local COINS_PER_CLICK = 1    -- Try changing this to 10, 100, or 9999!
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
--- Keep track of cooldowns
+-- Base coins per click
+local COINS_PER_CLICK = 1
+
+-- Cooldowns per player
 local cooldowns = {}
 
--- Get PlayerData module for cooldown and lucky stats
+-- Get modules
 local PlayerData = require(script.Parent.PlayerData)
 
--- Function to set up a coin pad
+-- Wait for shared folder
+local SharedFolder = ReplicatedStorage:WaitForChild("shared", 10)
+local SoundConfig
+pcall(function()
+    SoundConfig = require(SharedFolder:WaitForChild("SoundConfig", 5))
+end)
+
+-- Create particle effect
+local function createCoinBurst(part)
+    local attachment = Instance.new("Attachment")
+    attachment.Parent = part
+    
+    local particles = Instance.new("ParticleEmitter")
+    particles.Texture = "rbxassetid://243660364"  -- Sparkle
+    particles.Color = ColorSequence.new(Color3.fromRGB(255, 215, 0))
+    particles.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.5),
+        NumberSequenceKeypoint.new(1, 0)
+    })
+    particles.Lifetime = NumberRange.new(0.5, 1)
+    particles.Rate = 0
+    particles.Speed = NumberRange.new(5, 10)
+    particles.SpreadAngle = Vector2.new(180, 180)
+    particles.Parent = attachment
+    
+    return particles
+end
+
+-- Setup a coin pad
 local function setupCoinPad(pad)
-    -- Find or create a ClickDetector
+    -- Add ClickDetector if needed
     local clickDetector = pad:FindFirstChild("ClickDetector")
     if not clickDetector then
         clickDetector = Instance.new("ClickDetector")
-        clickDetector.MaxActivationDistance = 20  -- How close you need to be
+        clickDetector.MaxActivationDistance = 20
         clickDetector.Parent = pad
         print("➕ Added ClickDetector to " .. pad.Name)
     end
     
-    -- When someone clicks the pad
+    -- Add particle emitter
+    local particles = createCoinBurst(pad)
+    
+    -- Store original properties
+    local originalColor = pad.Color
+    local originalSize = pad.Size
+    
+    -- Make it glow
+    pad.Material = Enum.Material.Neon
+    
+    -- Click handler
     clickDetector.MouseClick:Connect(function(player)
-        -- Get player's cooldown from upgrades (Speed upgrade makes this faster!)
-        local playerCooldown = PlayerData.GetCooldown(player)
-        
         -- Check cooldown
+        local playerCooldown = PlayerData.GetCooldown(player)
         local lastClick = cooldowns[player.UserId]
         if lastClick and (tick() - lastClick) < playerCooldown then
-            return  -- Too fast! Wait a bit
+            return
         end
         cooldowns[player.UserId] = tick()
         
-        -- Give coins! (GiveCoins is created by GameManager)
+        -- Check for lucky bonus
+        local luckyChance = PlayerData.GetLuckyChance(player)
+        local isLucky = math.random(1, 100) <= luckyChance
+        
+        local baseCoins = COINS_PER_CLICK
+        if isLucky then
+            baseCoins = baseCoins * 2
+        end
+        
+        -- Give coins (GiveCoins handles all multipliers)
         if _G.GiveCoins then
-            local baseCoins = COINS_PER_CLICK
-            
-            -- Check for lucky bonus (chance for DOUBLE coins!)
-            local luckyChance = PlayerData.GetLuckyChance(player)
-            local isLucky = math.random(1, 100) <= luckyChance
-            
-            if isLucky then
-                baseCoins = baseCoins * 2
-                print("🍀 LUCKY! " .. player.Name .. " got DOUBLE coins!")
-            end
-            
             local amount = _G.GiveCoins(player, baseCoins)
             
-            -- Make the pad do a little bounce animation!
-            local originalSize = pad.Size
-            pad.Size = originalSize * 0.9
-            wait(0.1)
-            pad.Size = originalSize
+            -- Animations!
+            -- Bounce
+            TweenService:Create(pad, TweenInfo.new(0.1, Enum.EasingStyle.Bounce), {
+                Size = originalSize * 0.85
+            }):Play()
             
-            -- Extra sparkle for lucky hits!
+            wait(0.1)
+            
+            TweenService:Create(pad, TweenInfo.new(0.15, Enum.EasingStyle.Bounce), {
+                Size = originalSize
+            }):Play()
+            
+            -- Particles
+            particles:Emit(isLucky and 30 or 10)
+            
+            -- Color flash for lucky
             if isLucky then
                 pad.Color = Color3.fromRGB(255, 215, 0)  -- Gold!
+                print("🍀 LUCKY! " .. player.Name .. " got DOUBLE!")
                 wait(0.2)
-                pad.Color = Color3.fromRGB(100, 200, 100)  -- Back to green
+                pad.Color = originalColor
             end
-            
-            print("🪙 " .. player.Name .. " clicked and got " .. amount .. " coins!")
         end
     end)
     
-    -- Make the pad glow a bit
-    pad.Material = Enum.Material.Neon
+    -- Hover effects
+    clickDetector.MouseHoverEnter:Connect(function()
+        TweenService:Create(pad, TweenInfo.new(0.1), {
+            Size = originalSize * 1.1
+        }):Play()
+    end)
+    
+    clickDetector.MouseHoverLeave:Connect(function()
+        TweenService:Create(pad, TweenInfo.new(0.1), {
+            Size = originalSize
+        }):Play()
+    end)
     
     print("✅ CoinPad ready: " .. pad.Name)
 end
 
--- Find all existing CoinPads and set them up
+-- Find all existing CoinPads
 print("🔍 Looking for CoinPads...")
 for _, part in pairs(workspace:GetDescendants()) do
     if part:IsA("BasePart") and part.Name == "CoinPad" then
@@ -92,10 +148,10 @@ for _, part in pairs(workspace:GetDescendants()) do
     end
 end
 
--- Watch for new CoinPads being added
+-- Watch for new CoinPads
 workspace.DescendantAdded:Connect(function(descendant)
     if descendant:IsA("BasePart") and descendant.Name == "CoinPad" then
-        wait(0.1)  -- Small delay to make sure it's fully loaded
+        wait(0.1)
         setupCoinPad(descendant)
     end
 end)
