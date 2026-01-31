@@ -65,15 +65,20 @@ local function generatePetId()
 end
 
 -- Roll for rarity based on egg type
+-- FIXED: Use ordered array instead of pairs() which has undefined order!
+local RARITY_ORDER = {"Common", "Rare", "Epic", "Legendary"}
+
 local function rollRarity(eggType)
     loadDependencies()
     if not PetsConfig then return "Common" end
     
     local chances = PetsConfig.EggChances[eggType] or PetsConfig.EggChances.Basic
-    local roll = math.random(1, 100)
+    local roll = math.random(1, 1000) / 10  -- 0.1 precision for decimal chances like 4.5%
     local cumulative = 0
     
-    for rarity, chance in pairs(chances) do
+    -- Iterate in DEFINED order (Common → Rare → Epic → Legendary)
+    for _, rarity in ipairs(RARITY_ORDER) do
+        local chance = chances[rarity] or 0
         cumulative = cumulative + chance
         if roll <= cumulative then
             return rarity
