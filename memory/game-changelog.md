@@ -86,4 +86,23 @@ Kids now see the *possibility* before spending coins.
 
 **Why it matters:** Achievements should feel like CELEBRATIONS. Kids will literally say "WHOA!" when they see this animation. It's the difference between "oh I got something" and "OMG I GOT SOMETHING!"
 
+### HB-5: Review & Improve - CodesGui (16:40 PST)
+**Task:** Read a random file, apply Socratic questioning, make it better
+
+**File:** CodesGui.client.lua
+
+**Socratic Questions:**
+- Q: Is the success animation exciting enough?
+- A: No! Just a brief green flash. Boring.
+- Q: What makes code redemption fun in other games?
+- A: Feeling like you WON something!
+
+**Change:** Celebration when code works:
+- Button turns GOLD and scales up
+- Panel border pulses gold
+- Text pops bigger
+- Smooth return to normal
+
+**Principle:** Small animation changes = big dopamine hits
+
 *Future iterations will be logged below*
