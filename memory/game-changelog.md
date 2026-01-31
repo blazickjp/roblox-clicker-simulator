@@ -142,4 +142,19 @@ and (Common, Rare, Epic, Legendary) another. Probabilities broken!
 
 **Why it matters:** Kids remember milestones. This moment will stick.
 
+### HB-8: Polish Pass - Zone Teleport (16:55 PST)
+**Task:** Find one UI element that could be bouncier/more fun
+
+**Target:** Zone change experience
+
+**Before:** Click zone → instant change. Boring.
+
+**After:** 
+- Full screen flashes zone's color
+- "✨ Traveling to [Zone]! ✨" text appears
+- Smooth fade in/out
+- Panel auto-closes
+
+**Why it matters:** Zones are progression milestones. Traveling to a new one should feel like an ADVENTURE, not a settings change.
+
 *Future iterations will be logged below*
