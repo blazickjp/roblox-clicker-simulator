@@ -79,7 +79,7 @@ end)
 
 -- ===== EGG SHOP SECTION =====
 local eggSection = Instance.new("Frame")
-eggSection.Size = UDim2.new(1, -20, 0, 120)
+eggSection.Size = UDim2.new(1, -20, 0, 130)  -- Taller for teaser text
 eggSection.Position = UDim2.new(0, 10, 0, 55)
 eggSection.BackgroundColor3 = Color3.fromRGB(50, 45, 60)
 eggSection.Parent = panel
@@ -101,13 +101,15 @@ if PetsConfig then
     for eggType, eggData in pairs(PetsConfig.Eggs) do
         local eggBtn = Instance.new("TextButton")
         eggBtn.Name = eggType
-        eggBtn.Size = UDim2.new(0, 150, 0, 75)
-        eggBtn.Position = UDim2.new(0, eggX, 0, 35)
+        eggBtn.Size = UDim2.new(0, 150, 0, 90)  -- Taller for teaser
+        eggBtn.Position = UDim2.new(0, eggX, 0, 32)
         eggBtn.BackgroundColor3 = eggData.color
         eggBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
         eggBtn.TextScaled = true
         eggBtn.Font = Enum.Font.GothamBold
-        eggBtn.Text = eggData.emoji .. "\n" .. eggData.name .. "\n💰 " .. eggData.cost
+        -- Show teaser so kids know what they could get!
+        local teaser = eggData.teaser or ""
+        eggBtn.Text = eggData.emoji .. " " .. eggData.name .. "\n💰 " .. eggData.cost .. "\n" .. teaser
         eggBtn.Parent = eggSection
         Instance.new("UICorner", eggBtn).CornerRadius = UDim.new(0, 12)
         
@@ -123,7 +125,7 @@ end
 -- ===== PETS COLLECTION SECTION =====
 local collectionSection = Instance.new("Frame")
 collectionSection.Size = UDim2.new(1, -20, 0, 250)
-collectionSection.Position = UDim2.new(0, 10, 0, 185)
+collectionSection.Position = UDim2.new(0, 10, 0, 195)  -- Adjusted for taller egg section
 collectionSection.BackgroundColor3 = Color3.fromRGB(50, 45, 60)
 collectionSection.Parent = panel
 Instance.new("UICorner", collectionSection).CornerRadius = UDim.new(0, 15)
