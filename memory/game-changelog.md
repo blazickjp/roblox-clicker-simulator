@@ -157,4 +157,14 @@ and (Common, Rare, Epic, Legendary) another. Probabilities broken!
 
 **Why it matters:** Zones are progression milestones. Traveling to a new one should feel like an ADVENTURE, not a settings change.
 
+### HB-9: Kid Test - Daily Rewards Hint (17:20 PST)
+**Task:** Would a 9-year-old understand this?
+
+**Issue:** "Streak" might be confusing. What happens if they miss a day?
+
+**Fix:** Added hint text at bottom:
+"💡 Come back every day! Miss a day = streak resets to Day 1"
+
+**Why:** Sets clear expectations, prevents frustration, motivates daily return.
+
 *Future iterations will be logged below*
