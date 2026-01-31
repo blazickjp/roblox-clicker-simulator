@@ -128,4 +128,18 @@ and (Common, Rare, Epic, Legendary) another. Probabilities broken!
 
 **Lesson:** Socratic review found a REAL bug that would have caused unfair gameplay!
 
+### HB-7: New Idea - First Pet Celebration (16:50 PST)
+**Task:** Add ONE small delightful surprise
+
+**Insight:** A kid's FIRST PET is a milestone moment. It should feel special!
+
+**Change:**
+- Server tracks `isFirstPet` flag on hatched pet
+- Client shows special message: "🎉 YOUR FIRST PET! Welcome to pet ownership!"
+- Personalized: "[Pet name] loves you!"
+- Rainbow background flash celebration
+- Extra time to enjoy the moment
+
+**Why it matters:** Kids remember milestones. This moment will stick.
+
 *Future iterations will be logged below*
