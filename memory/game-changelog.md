@@ -71,4 +71,19 @@ Kids now see the *possibility* before spending coins.
 - Exponential rebirth costs create "one more!" loop
 - No changes needed
 
+### HB-4: Polish Pass (16:35 PST)
+**Task:** Find one UI element that could be bouncier/more fun
+
+**Target:** Achievement unlock popup
+
+**Before:** Simple slide-in from top, wait, slide-out. Boring.
+
+**After:** 
+- Starts tiny in center of screen
+- EXPLODES to full size with Back easing (overshoot bounce)
+- Golden border PULSES 3 times
+- Shrinks away when done
+
+**Why it matters:** Achievements should feel like CELEBRATIONS. Kids will literally say "WHOA!" when they see this animation. It's the difference between "oh I got something" and "OMG I GOT SOMETHING!"
+
 *Future iterations will be logged below*
