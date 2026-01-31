@@ -26,6 +26,11 @@ local COINS_PER_CLICK = 3
 local STARTER_BOOST_CLICKS = 10
 local STARTER_BOOST_MULTIPLIER = 10
 
+-- JACKPOT: 0.5% chance for 50x coins! Rare but EXCITING
+-- Creates "OMG DID YOU SEE THAT" moments kids will remember
+local JACKPOT_CHANCE = 0.5  -- percent
+local JACKPOT_MULTIPLIER = 50
+
 -- Track starter boost per player
 local starterBoostRemaining = {}
 
@@ -99,11 +104,19 @@ local function setupCoinPad(pad)
             starterBoostRemaining[player.UserId] = STARTER_BOOST_CLICKS
         end
         
+        -- Check for JACKPOT! (0.5% chance)
+        local isJackpot = math.random(1, 1000) <= (JACKPOT_CHANCE * 10)
+        
         -- Check for lucky bonus
         local luckyChance = PlayerData.GetLuckyChance(player)
         local isLucky = math.random(1, 100) <= luckyChance
         
         local baseCoins = COINS_PER_CLICK
+        
+        -- JACKPOT overrides everything!
+        if isJackpot then
+            baseCoins = baseCoins * JACKPOT_MULTIPLIER
+        end
         
         -- Apply starter boost if available
         local hasStarterBoost = false
@@ -141,10 +154,32 @@ local function setupCoinPad(pad)
             if hasStarterBoost then particleCount = 25 end
             if isLucky then particleCount = 30 end
             if hasStarterBoost and isLucky then particleCount = 50 end
+            if isJackpot then particleCount = 100 end  -- EXPLOSION!
             particles:Emit(particleCount)
             
-            -- Color flash for special events
-            if hasStarterBoost or isLucky then
+            -- JACKPOT gets the biggest celebration!
+            if isJackpot then
+                -- Flash rainbow colors rapidly
+                print("🎰🎰🎰 JACKPOT!!! " .. player.Name .. " got " .. JACKPOT_MULTIPLIER .. "x COINS!!!")
+                for i = 1, 5 do
+                    pad.Color = Color3.fromRGB(255, 0, 0)
+                    wait(0.05)
+                    pad.Color = Color3.fromRGB(255, 255, 0)
+                    wait(0.05)
+                    pad.Color = Color3.fromRGB(0, 255, 0)
+                    wait(0.05)
+                    pad.Color = Color3.fromRGB(0, 255, 255)
+                    wait(0.05)
+                    pad.Color = Color3.fromRGB(255, 0, 255)
+                    wait(0.05)
+                end
+                pad.Color = originalColor
+                -- Extra particle bursts
+                particles:Emit(50)
+                wait(0.1)
+                particles:Emit(50)
+            -- Color flash for other special events
+            elseif hasStarterBoost or isLucky then
                 if hasStarterBoost and isLucky then
                     pad.Color = Color3.fromRGB(255, 100, 255)  -- Purple for combo!
                     print("🎉🍀 STARTER BOOST + LUCKY! " .. player.Name .. " got MEGA COINS!")
