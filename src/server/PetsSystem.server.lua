@@ -127,6 +127,9 @@ local function hatchEgg(player, eggType)
     local petTemplate = getRandomPet(rarity)
     if not petTemplate then return nil end
     
+    -- Check if this is their FIRST PET EVER! (milestone moment)
+    local isFirstPet = (#data.Pets == 0)
+    
     -- Create pet instance
     local rarityConfig = PetsConfig.Rarities[rarity]
     local pet = {
@@ -137,11 +140,16 @@ local function hatchEgg(player, eggType)
         bonus = petTemplate.bonus * rarityConfig.multiplier,
         model = petTemplate.model,
         hatchedAt = os.time(),
+        isFirstPet = isFirstPet,  -- Flag for extra celebration on client!
     }
     
     -- Add to player's pets
     table.insert(data.Pets, pet)
     data.EggsHatched = data.EggsHatched + 1
+    
+    if isFirstPet then
+        print("🎉🐣 " .. player.Name .. " hatched their FIRST PET EVER! Welcome to pet ownership!")
+    end
     
     -- Track rarity stats
     if rarity == "Rare" then

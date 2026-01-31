@@ -280,6 +280,36 @@ local function playHatchAnimation(pet)
         hatchResult.Text = "💎 RARE! 💎\n" .. pet.name .. "\n+" .. string.format("%.1f", pet.bonus) .. "x coins!"
     end
     
+    -- 🎉 FIRST PET EVER celebration! This is a milestone moment!
+    if pet.isFirstPet then
+        wait(1)
+        
+        -- Extra special message!
+        hatchResult.TextColor3 = Color3.fromRGB(255, 150, 255)
+        hatchResult.Text = "🎉 YOUR FIRST PET! 🎉\nWelcome to pet ownership!\n" .. pet.emoji .. " " .. pet.name .. " loves you!"
+        
+        -- Rainbow flash celebration
+        local colors = {
+            Color3.fromRGB(255, 100, 100),
+            Color3.fromRGB(255, 200, 100),
+            Color3.fromRGB(255, 255, 100),
+            Color3.fromRGB(100, 255, 100),
+            Color3.fromRGB(100, 200, 255),
+            Color3.fromRGB(200, 100, 255),
+        }
+        for i = 1, 2 do
+            for _, color in ipairs(colors) do
+                hatchOverlay.BackgroundColor3 = color
+                hatchOverlay.BackgroundTransparency = 0.85
+                wait(0.1)
+            end
+        end
+        hatchOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        hatchOverlay.BackgroundTransparency = 0.7
+        
+        wait(1)
+    end
+    
     wait(2.5)
     
     -- Fade out
