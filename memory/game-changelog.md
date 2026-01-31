@@ -41,4 +41,20 @@ Tracking iterative improvements made during heartbeats.
 - Rainbow flash + 100 particle explosion
 - Creates "DID YOU SEE THAT?!" moments
 
+### HB-2: Egg Teasers (16:25 PST)
+**Task:** Kid Test - What would confuse a 9-year-old?
+
+**Socratic thinking:**
+- Q: Would a kid know what's inside an egg before buying?
+- A: No! They just see "Basic Egg 💰100" — boring, no excitement
+- Q: What makes kids excited to buy loot boxes/eggs?
+- A: Knowing what COULD be inside! The possibility of something rare!
+
+**Change:** Added teaser text to each egg button
+- Basic: "🐕🐱 Cute pets!"
+- Golden: "🐉 Epic chance!"
+- Mythic: "👑 15% LEGENDARY!"
+
+Kids now see the *possibility* before spending coins.
+
 *Future iterations will be logged below*
