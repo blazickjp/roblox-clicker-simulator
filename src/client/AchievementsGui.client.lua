@@ -200,22 +200,52 @@ popupText.Parent = popup
 local function showAchievementPopup(achievement)
     popupText.Text = "🏆 ACHIEVEMENT UNLOCKED! 🏆\n" .. achievement.emoji .. " " .. achievement.name
     popup.Visible = true
-    popup.Position = UDim2.new(0.5, -175, 0, -120)
     
-    -- Slide in
-    TweenService:Create(popup, TweenInfo.new(0.5, Enum.EasingStyle.Bounce), {
+    -- Start small and off-screen
+    popup.Size = UDim2.new(0, 50, 0, 20)
+    popup.Position = UDim2.new(0.5, -25, 0.5, -10)
+    popupStroke.Thickness = 1
+    
+    -- BOOM! Scale up with bounce (feels like an explosion!)
+    TweenService:Create(popup, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 350, 0, 100),
         Position = UDim2.new(0.5, -175, 0, 20)
     }):Play()
     
-    wait(3)
+    TweenService:Create(popupStroke, TweenInfo.new(0.4), {
+        Thickness = 3
+    }):Play()
     
-    -- Slide out
-    TweenService:Create(popup, TweenInfo.new(0.3), {
-        Position = UDim2.new(0.5, -175, 0, -120)
+    wait(0.4)
+    
+    -- Golden pulse effect (3 pulses)
+    for i = 1, 3 do
+        TweenService:Create(popupStroke, TweenInfo.new(0.15), {
+            Thickness = 6,
+            Color = Color3.fromRGB(255, 255, 150)
+        }):Play()
+        wait(0.15)
+        TweenService:Create(popupStroke, TweenInfo.new(0.15), {
+            Thickness = 3,
+            Color = Color3.fromRGB(255, 215, 0)
+        }):Play()
+        wait(0.15)
+    end
+    
+    wait(2)  -- Show for 2 more seconds
+    
+    -- Shrink and fade out (satisfying!)
+    TweenService:Create(popup, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 50, 0, 20),
+        Position = UDim2.new(0.5, -25, 0, -50)
     }):Play()
     
     wait(0.3)
     popup.Visible = false
+    
+    -- Reset for next time
+    popup.Size = UDim2.new(0, 350, 0, 100)
+    popupStroke.Thickness = 3
 end
 
 -- Events
