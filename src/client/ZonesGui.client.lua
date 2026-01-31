@@ -77,6 +77,47 @@ closeBtn.MouseButton1Click:Connect(function()
     panel.Visible = false
 end)
 
+-- TELEPORT EFFECT overlay (fullscreen flash when changing zones!)
+local teleportOverlay = Instance.new("Frame")
+teleportOverlay.Name = "TeleportOverlay"
+teleportOverlay.Size = UDim2.new(1, 0, 1, 0)
+teleportOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+teleportOverlay.BackgroundTransparency = 1
+teleportOverlay.Visible = false
+teleportOverlay.ZIndex = 50
+teleportOverlay.Parent = screenGui
+
+local teleportText = Instance.new("TextLabel")
+teleportText.Size = UDim2.new(1, 0, 0, 100)
+teleportText.Position = UDim2.new(0, 0, 0.4, 0)
+teleportText.BackgroundTransparency = 1
+teleportText.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportText.TextScaled = true
+teleportText.Font = Enum.Font.GothamBold
+teleportText.Text = ""
+teleportText.ZIndex = 51
+teleportText.Parent = teleportOverlay
+
+local function playTeleportEffect(zone)
+    teleportOverlay.BackgroundColor3 = zone.backgroundColor
+    teleportOverlay.BackgroundTransparency = 1
+    teleportOverlay.Visible = true
+    teleportText.Text = "✨ Traveling to " .. zone.name .. "! ✨"
+    
+    -- Flash IN
+    TweenService:Create(teleportOverlay, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+    wait(0.3)
+    
+    -- Hold
+    wait(0.3)
+    
+    -- Flash OUT
+    TweenService:Create(teleportOverlay, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+    wait(0.3)
+    
+    teleportOverlay.Visible = false
+end
+
 -- Zone buttons container
 local zoneButtons = {}
 local buttonY = 60
@@ -100,7 +141,13 @@ local function updateZoneButtons()
             
             btn.MouseButton1Click:Connect(function()
                 if ZonesConfig.IsUnlocked(zone.id, currentStats.Rebirths) then
+                    -- Don't teleport if already in this zone
+                    if currentStats.CurrentZone == zone.id then return end
+                    
+                    -- Play teleport effect then change zone!
+                    playTeleportEffect(zone)
                     ChangeZone:FireServer(zone.id)
+                    panel.Visible = false  -- Close panel after traveling
                 end
             end)
             
