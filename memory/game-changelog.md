@@ -105,4 +105,27 @@ Kids now see the *possibility* before spending coins.
 
 **Principle:** Small animation changes = big dopamine hits
 
+### HB-6: Review & Improve - PetsSystem (16:45 PST)
+**Task:** Read a random file, apply Socratic questioning
+
+**File:** PetsSystem.server.lua
+
+**Socratic discovery:** FOUND A BUG! 🐛
+- Q: Is the rarity roll working correctly?
+- A: NO! It uses `pairs()` which has UNDEFINED iteration order for string keys!
+
+**The problem:**
+```lua
+for rarity, chance in pairs(chances) do  -- ORDER NOT GUARANTEED!
+```
+Lua could iterate as (Epic, Common, Legendary, Rare) one time
+and (Common, Rare, Epic, Legendary) another. Probabilities broken!
+
+**The fix:**
+- Created ordered array: `{"Common", "Rare", "Epic", "Legendary"}`
+- Use `ipairs()` for guaranteed order
+- Added decimal precision for 4.5% chances
+
+**Lesson:** Socratic review found a REAL bug that would have caused unfair gameplay!
+
 *Future iterations will be logged below*
