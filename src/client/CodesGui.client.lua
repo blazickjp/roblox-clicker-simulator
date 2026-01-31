@@ -146,10 +146,39 @@ CodeResult.OnClientEvent:Connect(function(success, message)
         resultLabel.Text = "✅ " .. message
         textBox.Text = ""
         
-        -- Success animation
-        TweenService:Create(redeemBtn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(100, 255, 100)}):Play()
-        wait(0.1)
-        TweenService:Create(redeemBtn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(100, 200, 100)}):Play()
+        -- BIG SUCCESS CELEBRATION!
+        -- 1. Button goes GOLD and scales up
+        TweenService:Create(redeemBtn, TweenInfo.new(0.15, Enum.EasingStyle.Back), {
+            BackgroundColor3 = Color3.fromRGB(255, 215, 0),
+            Size = UDim2.new(0.95, 0, 0, 60)
+        }):Play()
+        
+        -- 2. Panel border pulses
+        TweenService:Create(stroke, TweenInfo.new(0.15), {
+            Thickness = 6,
+            Color = Color3.fromRGB(255, 215, 0)
+        }):Play()
+        
+        wait(0.15)
+        
+        -- 3. Flash the result text bigger
+        resultLabel.TextScaled = false
+        resultLabel.TextSize = 24
+        TweenService:Create(resultLabel, TweenInfo.new(0.1), {TextSize = 18}):Play()
+        
+        wait(0.3)
+        
+        -- 4. Return to normal
+        TweenService:Create(redeemBtn, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(100, 200, 100),
+            Size = UDim2.new(0.9, 0, 0, 50)
+        }):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {
+            Thickness = 3,
+            Color = Color3.fromRGB(200, 100, 200)
+        }):Play()
+        
+        resultLabel.TextScaled = true
     else
         resultLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
         resultLabel.Text = "❌ " .. message
