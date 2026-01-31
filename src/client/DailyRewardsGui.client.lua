@@ -162,13 +162,24 @@ Instance.new("UICorner", claimBtn).CornerRadius = UDim.new(0, 15)
 
 local resultLabel = Instance.new("TextLabel")
 resultLabel.Size = UDim2.new(1, 0, 0, 25)
-resultLabel.Position = UDim2.new(0, 0, 1, -30)
+resultLabel.Position = UDim2.new(0, 0, 1, -55)
 resultLabel.BackgroundTransparency = 1
 resultLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
 resultLabel.TextScaled = true
 resultLabel.Font = Enum.Font.GothamBold
 resultLabel.Text = ""
 resultLabel.Parent = panel
+
+-- Hint text for kids (explain the streak system!)
+local hintLabel = Instance.new("TextLabel")
+hintLabel.Size = UDim2.new(1, -20, 0, 20)
+hintLabel.Position = UDim2.new(0, 10, 1, -28)
+hintLabel.BackgroundTransparency = 1
+hintLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+hintLabel.TextScaled = true
+hintLabel.Font = Enum.Font.Gotham
+hintLabel.Text = "💡 Come back every day! Miss a day = streak resets to Day 1"
+hintLabel.Parent = panel
 
 local canClaim = true
 local currentStatus = nil
